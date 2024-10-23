@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Introduction</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link rel="stylesheet" href="styles/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Open+Sans"
+    />
+  </head>
+  <body id="bg">
+    <div class="nav">
+      <div class="topnav">
+        <div id="myLinks">
+          <div class="dropdown">
+            <button class="dropbtn">
+              Latar Belakang
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a onclick="changeBackgroundColor('lilac')">warna lilac</a>
+              <a onclick="changeBackgroundColor('pink')">warna pink</a>
+              <a onclick="changeBackgroundColor('#f5f5f5')">default</a>
+            </div>
+          </div>
+          <a onclick="dark()">Dark Mode</a>
+          <div class="dropdown">
+            <button class="dropbtn">
+              Font Style
+              <i class="fa fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+              <a onclick="changeFont('sans-serif')">Sans Serif</a>
+              <a onclick="changeFont('monospace')">Monospace</a>
+            </div>
+          </div>
+        </div>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+          <i class="fa fa-bars"></i>
+        </a>
+      </div>
+    </div>
+    <br />
+    <div id="text">
+      <div class="lingkaran">
+        <img src="img1.jpeg" alt="aku" />
+      </div>
+      <div class="kotak">
+        <h2>Tentang Saya</h2>
+        <p>
+          Hallo Everyone perkenalkan nama saya Cinta Fatwa Aulia Nur Fadhilah
+          mahasiswi Universitas Ahmad Dahlan yang sedang mempelajari tentang
+          Teknologi Web.
+        </p>
+      </div>
+      <div class="kotak">
+        <h2>Project</h2>
+        <div class="project">
+          <a href="https://scratch.mit.edu/projects/929193277/">Project 1</a>
+        </div>  
+        <div class="project">
+          <a href="https://scratch.mit.edu/projects/932853849/">Project 2</a>
+        </div>  
+        <br />
+      </div>
+      <div class="kotak">
+        <h2>Kontak</h2>
+        <ul>
+          instagram : cintaftw
+        </ul>
+        <ul>
+          email: 2300016049@webmail.uad.ac.id
+        </ul>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
