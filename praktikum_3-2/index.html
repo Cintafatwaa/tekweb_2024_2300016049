@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>To-Do App</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            margin-top: 70px;
+        }
+
+        .container {
+            max-width: 400px;
+            max-height: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            text-align: center;
+        }
+
+        .container p {
+            font-size: 9px;
+        }
+
+        .slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        #textSize {
+            font-size: 20px;
+            transition: font-size 0.2s ease;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            border-radius: 8px;
+        }
+
+        .but {
+            border-radius: 10px;
+            background-color: rgb(50, 194, 204);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 10px 15px;
+            width: 100%;
+        }
+
+        #taskList {
+            list-style: none;
+            padding: 0;
+        }
+
+        #taskList li {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+            position: relative;
+        }
+
+        ul li.completed {
+            background: #888;
+            color: #fff;
+            text-decoration: line-through;
+        }
+
+        .delete-btn {
+            background: none;
+            border: 1px solid;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 10px;
+            background-color: red;
+            color: white;
+        }
+
+        .dropdown {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .dropdown .dropbtn {
+            font-size: 16px;
+            border: none;
+            outline: none;
+            color: black;
+            padding: 14px 16px;
+            background-color: skyblue;
+            font-family: inherit;
+            margin: 0;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            float: none;
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dark-mode {
+            background-color: black;
+            color: grey;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>My To-Do List</h2>
+        <div id="textSize">
+            <input type="text" id="newTask" placeholder="Add a new task...">
+            <button class="but" onclick="addTask()">Add</button>
+            <p>Note: klik satu kali tulisan untuk completeTas klik dua kali untuk edit tulisan</p>
+            <ul id="taskList"></ul>
+        </div>
+        <h2>Change Appearance</h2>
+        <input type="range" min="10" max="50" value="20" class="slider" id="sizeSlider">
+        <div class="dropdown">
+            <button class="dropbtn">Latar Belakang</button>
+            <div class="dropdown-content">
+                <a onclick="changeBackgroundColor('aqua')">warna aqua</a>
+                <a onclick="changeBackgroundColor('pink')">warna pink</a>
+                <a onclick="changeBackgroundColor('#f5f5f5')">default</a>
+            </div>
+        </div>
+        <div class="dropdown">
+                <button class="dropbtn" onclick="dark()">Dark Mode</button>
+        </div>
+        
+        <div class="dropdown">
+            <button class="dropbtn">Font Style</button>
+            <div class="dropdown-content">
+                <a onclick="changeFont('sans-serif')">Sans Serif</a>
+                <a onclick="changeFont('monospace')">Monospace</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const taskInput = document.getElementById('newTask');
+        const taskList = document.getElementById('taskList');
+        const textSize = document.getElementById('textSize');
+        const sizeSlider = document.getElementById('sizeSlider');
+
+        sizeSlider.addEventListener('input', function () {
+            textSize.style.fontSize = sizeSlider.value + 'px';
+        });
+
+        function addTask() {
+            const taskText = taskInput.value.trim();
+            if (taskText !== '') {
+                const li = document.createElement('li');
+                li.textContent = taskText;
+                li.addEventListener('click', completeTask);
+                li.ondblclick = () => editTask(li);
+                addDeleteButton(li);
+                taskList.appendChild(li);
+                taskInput.value = '';
+                saveTasksToLocalStorage();
+            }
+        }
+
+        function deleteTask(event) {
+            const task = event.target.parentElement;
+            taskList.removeChild(task);
+            saveTasksToLocalStorage();
+        }
+
+        function completeTask(event) {
+            const task = event.target;
+            task.classList.toggle('completed');
+            saveTasksToLocalStorage();
+        }
+
+        function editTask(li) {
+            const originalText = li.firstChild.textContent;
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = originalText;
+            input.className = 'edit-input';
+            li.innerHTML = '';
+            li.appendChild(input);
+
+            input.focus();
+
+            input.onkeydown = (event) => {
+                if (event.key === 'Enter') {
+                    saveEdit(li, input.value);
+                }
+            };
+
+            input.onblur = () => saveEdit(li, input.value);
+        }
+
+        function saveEdit(li, newText) {
+            li.innerHTML = '';
+            li.textContent = newText;
+            li.addEventListener('click', completeTask);
+            li.ondblclick = () => editTask(li);
+            addDeleteButton(li);
+            saveTasksToLocalStorage();
+        }
+
+        function addDeleteButton(li) {
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.onclick = deleteTask;
+            li.appendChild(deleteBtn);
+        }
+
+        function saveTasksToLocalStorage() {
+            const tasks = [];
+            const taskItems = taskList.getElementsByTagName('li');
+
+            for (let i = 0; i < taskItems.length; i++) {
+                const taskText = taskItems[i].textContent.replace('Delete', '').trim();
+                const isCompleted = taskItems[i].classList.contains('completed');
+                tasks.push({ text: taskText, completed: isCompleted });
+            }
+
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function loadTasksFromLocalStorage() {
+            const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.textContent = task.text;
+                if (task.completed) {
+                    li.classList.add('completed');
+                }
+                li.addEventListener('click', completeTask);
+                li.ondblclick = () => editTask(li);
+                addDeleteButton(li);
+                taskList.appendChild(li);
+            });
+        }
+        loadTasksFromLocalStorage();
+
+        function dark() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        function changeFont(font) {
+            document.body.style.fontFamily = font; // Change font for the entire body
+        }
+
+        function changeBackgroundColor(color) {
+            document.body.style.backgroundColor = color; // Change body background color
+        }
+    </script>
+
+</body>
+
+</html>
